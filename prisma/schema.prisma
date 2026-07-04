@@ -1,0 +1,414 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum JobStatus {
+  ACTIVE
+  CLOSED
+  EXPIRED
+}
+
+enum RemoteStatus {
+  FULLY_REMOTE
+  HYBRID
+  ON_SITE
+  UNKNOWN
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+  FREELANCE
+}
+
+enum ExperienceLevel {
+  ENTRY
+  MID
+  SENIOR
+  LEAD
+  EXECUTIVE
+}
+
+enum NotificationType {
+  NEW_COMPANY
+  NEW_JOB
+  SCRAPE_COMPLETE
+  EXPORT_READY
+  SYSTEM
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String?
+  role          UserRole  @default(USER)
+  avatar        String?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastLoginAt   DateTime?
+
+  savedCompanies  SavedCompany[]
+  savedSearches   SavedSearch[]
+  notifications   Notification[]
+  searchHistory   SearchHistory[]
+  exports         Export[]
+  auditLogs       AuditLog[]
+
+  @@map("users")
+}
+
+model Company {
+  id                  String   @id @default(cuid())
+  name                String
+  slug                String   @unique
+  website             String?
+  domain              String?  @unique
+  logo                String?
+  description         String?  @db.Text
+  summary             String?  @db.Text
+  industry            String?
+  subIndustry         String?
+  businessCategory    String?
+  founded             Int?
+  companySize         String?
+  headquarters        String?
+  country             String?
+  city                String?
+  state               String?
+  remotePolicy        String?
+  linkedIn            String?
+  twitter             String?
+  facebook            String?
+  instagram           String?
+  github              String?
+  youtube             String?
+  phoneNumbers        String[]
+  publicEmails        String[]
+  supportEmail        String?
+  hrEmail             String?
+  recruitmentEmail     String?
+  contactPage         String?
+  privacyPage         String?
+  termsPage           String?
+  blog                String?
+  careersPage         String?
+  
+  // Scores
+  hiringScore         Int?     @default(0)
+  growthScore         Int?     @default(0)
+  startupScore        Int?     @default(0)
+  remoteScore         Int?     @default(0)
+  technologyScore     Int?     @default(0)
+  aiAdoptionScore     Int?     @default(0)
+  
+  // Website Analysis
+  frontendFramework   String?
+  backendFramework  String?
+  cms                 String?
+  hostingProvider     String?
+  cloudProvider       String?
+  cdn                 String?
+  analytics           String?
+  tagManager          String?
+  ssl                 Boolean? @default(false)
+  robotsTxt           Boolean? @default(false)
+  sitemap             Boolean? @default(false)
+  language            String?
+  
+  isEnriched          Boolean  @default(false)
+  isVerified          Boolean  @default(false)
+  isDuplicate         Boolean  @default(false)
+  duplicateOfId       String?
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  lastScrapedAt       DateTime?
+  
+  jobs                Job[]
+  contacts            Contact[]
+  technologies        CompanyTechnology[]
+  sources             Source[]
+  scrapeLogs          ScrapeLog[]
+  savedBy             SavedCompany[]
+  
+  @@index([name])
+  @@index([domain])
+  @@index([country])
+  @@index([industry])
+  @@index([remotePolicy])
+  @@index([hiringScore])
+  @@index([createdAt])
+  @@index([isDuplicate])
+  @@map("companies")
+}
+
+model Job {
+  id              String         @id @default(cuid())
+  title           String
+  department      String?
+  location        String?
+  employmentType  EmploymentType?
+  remoteStatus    RemoteStatus?
+  isWorldwideRemote Boolean      @default(false)
+  salary          String?
+  salaryMin       Int?
+  salaryMax       Int?
+  currency        String?
+  experienceLevel ExperienceLevel?
+  postedDate      DateTime?
+  closingDate     DateTime?
+  jobUrl          String?
+  applyUrl        String?
+  benefits        String[]
+  requiredSkills  String[]
+  preferredSkills String[]
+  technologies    String[]
+  description     String?        @db.Text
+  status          JobStatus      @default(ACTIVE)
+  
+  companyId       String
+  company         Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  sourceId        String?
+  source          Source?        @relation(fields: [sourceId], references: [id])
+  
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  
+  @@index([title])
+  @@index([companyId])
+  @@index([remoteStatus])
+  @@index([employmentType])
+  @@index([experienceLevel])
+  @@index([status])
+  @@index([createdAt])
+  @@map("jobs")
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String?
+  phone     String?
+  title     String?
+  department String?
+  linkedIn  String?
+  twitter   String?
+  isPublic  Boolean  @default(true)
+  
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([companyId])
+  @@index([email])
+  @@map("contacts")
+}
+
+model Technology {
+  id          String              @id @default(cuid())
+  name        String              @unique
+  category    String?
+  description String?
+  
+  companies   CompanyTechnology[]
+  
+  createdAt   DateTime            @default(now())
+  
+  @@index([name])
+  @@map("technologies")
+}
+
+model CompanyTechnology {
+  companyId     String
+  company       Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  technologyId  String
+  technology    Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+  detectedAt    DateTime   @default(now())
+  
+  @@id([companyId, technologyId])
+  @@map("company_technologies")
+}
+
+model Industry {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  
+  createdAt   DateTime @default(now())
+  
+  @@map("industries")
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  country   String
+  city      String?
+  state     String?
+  region    String?
+  
+  @@unique([country, city, state])
+  @@map("locations")
+}
+
+model Source {
+  id          String   @id @default(cuid())
+  name        String
+  url         String
+  type        String
+  
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  jobs        Job[]
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([companyId])
+  @@index([name])
+  @@map("sources")
+}
+
+model ScrapeLog {
+  id          String   @id @default(cuid())
+  source      String
+  status      String
+  itemsFound  Int      @default(0)
+  itemsAdded  Int      @default(0)
+  itemsUpdated Int     @default(0)
+  errors      String[]
+  duration    Int?     // in milliseconds
+  
+  companyId   String?
+  company     Company? @relation(fields: [companyId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([source])
+  @@index([status])
+  @@index([createdAt])
+  @@map("scrape_logs")
+}
+
+model Export {
+  id          String   @id @default(cuid())
+  format      String
+  fileUrl     String?
+  status      String   @default("pending")
+  filters     String?  @db.Text
+  recordCount Int?     @default(0)
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  completedAt DateTime?
+  
+  @@index([userId])
+  @@index([status])
+  @@map("exports")
+}
+
+model SavedCompany {
+  id        String   @id @default(cuid())
+  notes     String?
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, companyId])
+  @@map("saved_companies")
+}
+
+model SavedSearch {
+  id          String   @id @default(cuid())
+  name        String
+  query       String?
+  filters     String?  @db.Text
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([userId])
+  @@map("saved_searches")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  data      String?          @db.Text
+  
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime         @default(now())
+  
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model SearchHistory {
+  id        String   @id @default(cuid())
+  query     String?
+  filters   String?  @db.Text
+  resultsCount Int   @default(0)
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([createdAt])
+  @@map("search_history")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String?
+  oldValue  String?  @db.Text
+  newValue  String?  @db.Text
+  ipAddress String?
+  userAgent String?
+  
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([action])
+  @@index([entity])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

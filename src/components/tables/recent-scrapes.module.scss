@@ -1,0 +1,62 @@
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+
+  th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  th {
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-text-muted);
+  }
+
+  td {
+    color: var(--color-text);
+  }
+}
+
+.source {
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.completed {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-secondary);
+}
+
+.failed {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-danger);
+}
+
+.running {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--color-info);
+}
+
+.time {
+  color: var(--color-text-muted);
+  font-size: 13px;
+  white-space: nowrap;
+}

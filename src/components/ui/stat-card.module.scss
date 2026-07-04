@@ -1,0 +1,86 @@
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.iconWrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.info {
+  flex: 1;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.2;
+}
+
+.trend {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trendValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-secondary);
+  background: rgba(16, 185, 129, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.trendLabel {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.secondary .iconWrapper {
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.info .iconWrapper {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.warning .iconWrapper {
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.danger .iconWrapper {
+  background: rgba(239, 68, 68, 0.15);
+}
