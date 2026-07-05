@@ -17,6 +17,14 @@ export class DataIngestionService {
 
     for (const result of results) {
       try {
+        const qualifyingJobs = result.jobs.filter(
+          (job) => job.remoteStatus === 'FULLY_REMOTE' && job.isWorldwideRemote === true
+        );
+
+        if (qualifyingJobs.length === 0) {
+          continue;
+        }
+
         // Check for duplicates
         const domain = result.company.website
           ? new URL(result.company.website.startsWith('http') ? result.company.website : `https://${result.company.website}`).hostname.replace(/^www\./, '')
@@ -72,7 +80,7 @@ export class DataIngestionService {
         });
 
         // Ingest jobs
-        for (const job of result.jobs) {
+        for (const job of qualifyingJobs) {
           const existingJob = await prisma.job.findFirst({
             where: {
               companyId,

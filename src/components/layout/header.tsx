@@ -9,7 +9,11 @@ export function Header() {
   const router = useRouter();
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+    try {
+      await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+    } catch {
+      // Ignore network errors, still logout locally
+    }
     logout();
     router.push("/login");
   };

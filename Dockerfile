@@ -2,7 +2,10 @@
 FROM node:20-alpine AS base
 
 # Install dependencies for native modules
-RUN apk add --no-cache libc6-compat
+# openssl is required so Prisma's engine detection picks the musl+openssl3 build
+# instead of falling back to the legacy openssl1.1 musl engine, which this Alpine
+# base no longer ships (causes "libssl.so.1.1: No such file" at runtime)
+RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
 # Dependencies stage

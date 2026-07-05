@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import styles from "./page.module.scss";
 
 async function fetchJob(id: string) {
@@ -12,6 +12,7 @@ async function fetchJob(id: string) {
 
 export default function JobDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
 
   const { data, isLoading } = useQuery({
@@ -33,6 +34,10 @@ export default function JobDetailPage() {
 
   return (
     <div className={styles.container}>
+      <button type="button" onClick={() => router.back()} className={styles.backBtn}>
+        ← Back
+      </button>
+
       <div className={styles.header}>
         <h1 className={styles.title}>{job.title}</h1>
         {company && (

@@ -10,9 +10,18 @@ import { GoogleJobsScraper } from './googlejobs.scraper';
 import { ZipRecruiterScraper } from './ziprecruiter.scraper';
 import { GlassdoorScraper } from './glassdoor.scraper';
 import { GoogleDiscoveryScraper } from './google-discovery.scraper';
+import { AshbyScraper } from './ashby.scraper';
+import { WorkableScraper } from './workable.scraper';
+import { SmartRecruitersScraper } from './smartrecruiters.scraper';
+import { TeamtailorScraper } from './teamtailor.scraper';
+import { BambooHRScraper } from './bamboohr.scraper';
+import { PersonioScraper } from './personio.scraper';
+import { RecruiteeScraper } from './recruitee.scraper';
+import { WelcomeToTheJungleScraper } from './welcometothejungle.scraper';
 import { BaseScraper } from './base.scraper';
+import { ScraperName } from './scraper-names';
 
-const scraperRegistry: Record<string, () => BaseScraper> = {
+const scraperRegistry: Record<ScraperName, () => BaseScraper> = {
   'RemoteOK': () => new RemoteOKScraper(),
   'WeWorkRemotely': () => new WeWorkRemotelyScraper(),
   'Himalayas': () => new HimalayasScraper(),
@@ -25,13 +34,17 @@ const scraperRegistry: Record<string, () => BaseScraper> = {
   'ZipRecruiter': () => new ZipRecruiterScraper(),
   'Glassdoor': () => new GlassdoorScraper(),
   'GoogleDiscovery': () => new GoogleDiscoveryScraper(),
+  'Ashby': () => new AshbyScraper(),
+  'Workable': () => new WorkableScraper(),
+  'SmartRecruiters': () => new SmartRecruitersScraper(),
+  'Teamtailor': () => new TeamtailorScraper(),
+  'BambooHR': () => new BambooHRScraper(),
+  'Personio': () => new PersonioScraper(),
+  'Recruitee': () => new RecruiteeScraper(),
+  'WelcomeToTheJungle': () => new WelcomeToTheJungleScraper(),
 };
 
 export function getScraper(name: string): BaseScraper | null {
-  const factory = scraperRegistry[name];
+  const factory = (scraperRegistry as Record<string, () => BaseScraper>)[name];
   return factory ? factory() : null;
-}
-
-export function getAllScraperNames(): string[] {
-  return Object.keys(scraperRegistry);
 }

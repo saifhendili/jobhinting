@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { setUser } = useAuthStore();
@@ -18,6 +19,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
     setLoading(true);
 
     try {
@@ -42,7 +44,10 @@ export default function LoginPage() {
         router.push("/");
       } else {
         setIsLogin(true);
-        setError("Account created! Please log in.");
+        setSuccess("Account created! Please log in.");
+        setName("");
+        setEmail("");
+        setPassword("");
       }
     } catch (err) {
       setError((err as Error).message);
@@ -101,6 +106,8 @@ export default function LoginPage() {
             />
           </div>
 
+          {success && <p className={styles.success}>{success}</p>}
+
           {error && <p className={styles.error}>{error}</p>}
 
           <button type="submit" disabled={loading} className={styles.submit}>
@@ -110,7 +117,7 @@ export default function LoginPage() {
 
         <p className={styles.switch}>
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-          <button onClick={() => { setIsLogin(!isLogin); setError(""); }} className={styles.switchBtn}>
+          <button onClick={() => { setIsLogin(!isLogin); setError(""); setSuccess(""); setName(""); }} className={styles.switchBtn}>
             {isLogin ? "Sign Up" : "Sign In"}
           </button>
         </p>

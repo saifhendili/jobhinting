@@ -178,7 +178,7 @@ export abstract class BaseScraper {
       },
     };
 
-    const response = await this.axiosInstance.get(url, config);
+    const response = await this.axiosInstance.request({ url, method: 'GET', ...config });
     return response.data;
   }
 

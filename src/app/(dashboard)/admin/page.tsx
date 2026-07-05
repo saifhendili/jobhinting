@@ -2,15 +2,12 @@
 
 import { useState } from "react";
 import { ProtectedRoute } from "@/components/auth/protected-route";
+import { SCRAPER_NAMES } from "@/services/scraper/scraper-names";
 import styles from "./page.module.scss";
 
-const SCRAPER_SOURCES = [
-  "RemoteOK", "We Work Remotely", "Himalayas", "Jobspresso",
-  "Remote.co", "Startup.jobs", "Greenhouse", "Lever", "Ashby",
-  "Workable", "SmartRecruiters", "Teamtailor", "BambooHR",
-  "Personio", "Recruitee", "Comeet", "Jobvite", "Indeed",
-  "LinkedIn", "Glassdoor", "Google Jobs",
-];
+// Sourced from the same list scraper.registry.ts is typed against, so this
+// can never reference a scraper that doesn't actually exist.
+const SCRAPER_SOURCES: readonly string[] = SCRAPER_NAMES;
 
 export default function AdminPage() {
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
