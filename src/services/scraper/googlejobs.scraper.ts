@@ -17,9 +17,9 @@ export class GoogleJobsScraper extends BaseScraper {
     try {
       const page = await this.initBrowser();
       
-      // Search for remote jobs via Google
+      // Search for worldwide remote jobs via Google
       await page.goto(
-        `${this.config.baseUrl}/search?q=remote+software+engineer+jobs&ibp=htl;jobs`,
+        `${this.config.baseUrl}/search?q=remote+worldwide+software+engineer+jobs&ibp=htl;jobs`,
         { waitUntil: 'networkidle' }
       );
 

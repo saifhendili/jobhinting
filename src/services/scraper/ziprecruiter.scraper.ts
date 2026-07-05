@@ -15,7 +15,7 @@ export class ZipRecruiterScraper extends BaseScraper {
     const results: ScrapeResult[] = [];
     
     try {
-      const $ = await this.fetchHtml(`${this.config.baseUrl}/jobs/search?search=remote&location=`);
+      const $ = await this.fetchHtml(`${this.config.baseUrl}/jobs/search?search=remote+worldwide&location=Worldwide`);
       
       const companyMap = new Map<string, { company: ScrapedCompany; jobs: ScrapedJob[] }>();
 

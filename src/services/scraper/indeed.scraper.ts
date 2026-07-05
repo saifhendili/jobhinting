@@ -17,8 +17,8 @@ export class IndeedScraper extends BaseScraper {
     try {
       const page = await this.initBrowser();
       
-      // Search for remote jobs
-      await page.goto(`${this.config.baseUrl}/jobs?q=remote&l=Remote&fromage=1`, {
+      // Search for worldwide remote jobs
+      await page.goto(`${this.config.baseUrl}/jobs?q=remote+worldwide&l=Worldwide&fromage=1`, {
         waitUntil: 'networkidle',
       });
 

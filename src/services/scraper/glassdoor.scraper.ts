@@ -19,7 +19,7 @@ export class GlassdoorScraper extends BaseScraper {
       
       // Respect Glassdoor's ToS
       await page.goto(
-        `${this.config.baseUrl}/Job/remote-jobs-SRCH_IL.0,6_ISKT0.htm`,
+        `${this.config.baseUrl}/Job/jobs.htm?sc.keyword=remote+worldwide&locT=&locId=&remoteWorkType=1`,
         { waitUntil: 'networkidle' }
       );
 
